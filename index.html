@@ -7,7 +7,6 @@
 <style>
 /* ===== Design tokens ===== */
 :root {
-  /* Surfaces and ink */
   --navy-900: #0a1f44;
   --navy-800: #102c5c;
   --blue-700: #1250a8;
@@ -15,6 +14,7 @@
   --blue-100: #e3edfb;
   --paper: #eef2f8;
   --surface: #ffffff;
+  --surface-2: #f8fafd;
   --ink: #0f1b33;
   --ink-2: #44506a;
   --muted: #62708a;
@@ -26,7 +26,7 @@
   --grey: #8a93a3;
   --green: #1b7f4b;
 
-  /* Chart series, fixed order (validated categorical slots 1-4, plus the late bar) */
+  /* Chart series: fixed order, colour follows the entity */
   --series-1: #2a78d6;
   --series-2: #eb6834;
   --series-3: #1baf7a;
@@ -34,8 +34,13 @@
   --bar-ok: #2a78d6;
   --bar-late: #d03b3b;
 
+  /* WhatsApp widget */
+  --wa: #128c7e;
+  --wa-dark: #0b6b5f;
+
   --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
   --r-panel: 14px;
+  --r-inner: 10px;
   --r-card: 8px;
   --r-ctl: 8px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -49,14 +54,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ===== Header ===== */
 .app-header { background: var(--navy-900); color: #fff; }
-.app-header-inner { max-width: 1440px; margin: 0 auto; padding: var(--sp-4) var(--sp-5); display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: center; justify-content: space-between; }
-.wordmark { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.03em; line-height: 1; display: flex; align-items: baseline; gap: var(--sp-3); }
+.app-header-inner { max-width: 1440px; margin: 0 auto; padding: var(--sp-4) var(--sp-5); display: flex; flex-wrap: wrap; gap: var(--sp-4) var(--sp-5); align-items: center; }
+.wordmark { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.03em; line-height: 1; display: flex; align-items: baseline; gap: var(--sp-3); margin-right: auto; }
 .wordmark span { font-size: 15px; font-weight: 500; letter-spacing: 0; color: #a9bfe6; }
+.meter { display: flex; align-items: center; gap: var(--sp-3); font-size: 13px; color: #c9d8f3; }
+.meter strong { color: #fff; font-size: 15px; }
+.meter-track { width: 160px; height: 8px; background: rgba(255,255,255,.18); border-radius: 999px; overflow: hidden; }
+.meter-fill { display: block; height: 100%; background: #5fd0a3; border-radius: 999px; transition: width .4s ease; }
 .btn { border: 1px solid var(--blue-700); background: var(--blue-700); color: #fff; padding: 9px var(--sp-4); border-radius: var(--r-ctl); cursor: pointer; font-weight: 600; }
 .btn:hover { background: var(--blue-500); border-color: var(--blue-500); }
 .btn:disabled { opacity: .6; cursor: not-allowed; }
 .btn.secondary { background: var(--surface); color: var(--blue-700); }
 .btn.secondary:hover { background: var(--blue-100); border-color: var(--blue-700); }
+.btn.small { padding: 6px var(--sp-3); font-size: 13px; }
 .app-header .btn { background: #fff; color: var(--navy-900); border-color: #fff; }
 .app-header .btn:hover { background: var(--blue-100); border-color: var(--blue-100); }
 
@@ -64,18 +74,43 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .filters { display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: end; padding: var(--sp-4) 0; }
 .filters label { display: flex; flex-direction: column; gap: var(--sp-1); font-size: 12px; font-weight: 600; color: var(--ink-2); }
 .filters input, .filters select { padding: 8px var(--sp-3); border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--surface); min-width: 180px; font-weight: 400; }
-.note { margin: 0 0 0 auto; font-size: 12px; color: var(--muted); max-width: 360px; }
+.filters-end { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); justify-content: flex-end; }
+.note { margin: 0; font-size: 12px; color: var(--muted); max-width: 320px; }
 
-/* ===== Insights: key figures and charts ===== */
-.insights { position: relative; display: grid; gap: var(--sp-4); grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); margin-bottom: var(--sp-5); }
-.kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
-.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); padding: var(--sp-4) var(--sp-5); display: flex; flex-direction: column; gap: 2px; }
+/* ===== Collapsible sections ===== */
+.stack { display: flex; flex-direction: column; gap: var(--sp-4); }
+.acc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); }
+.acc-head { margin: 0; }
+.acc-toggle { width: 100%; display: flex; align-items: center; gap: var(--sp-3); padding: 14px var(--sp-5); background: transparent; border: 0; border-radius: var(--r-panel); cursor: pointer; text-align: left; }
+.acc-toggle:hover { background: var(--surface-2); }
+.chev { width: 18px; height: 18px; flex: none; color: var(--blue-700); transition: transform .25s ease; }
+.acc.open .chev { transform: rotate(90deg); }
+.acc-title { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+.acc-summary { margin-left: auto; color: var(--muted); font-size: 13px; text-align: right; }
+.acc-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+.acc.open .acc-body { grid-template-rows: 1fr; }
+.acc-inner { min-height: 0; overflow: hidden; }
+.acc-pad { padding: var(--sp-1) var(--sp-5) var(--sp-5); position: relative; }
+
+/* ===== Key figures ===== */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
+.kpi { text-align: left; background: var(--surface-2); border: 1px solid var(--hairline); border-radius: var(--r-inner); padding: var(--sp-4) var(--sp-5); display: flex; flex-direction: column; gap: 2px; cursor: pointer; }
+.kpi:hover { border-color: var(--blue-500); background: #fff; }
+.kpi.is-selected { border-color: var(--blue-500); background: #fff; box-shadow: 0 0 0 2px var(--blue-500); }
 .kpi-value { font-size: 40px; line-height: 1.05; font-weight: 700; letter-spacing: -.03em; }
 .kpi-label { color: var(--ink-2); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.kpi-hint { color: var(--muted); font-size: 12px; margin-top: 2px; }
 .kpi.alert { border-color: var(--red); background: var(--red-bg); }
 .kpi.alert .kpi-value, .kpi.alert .kpi-label { color: var(--red); }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); padding: var(--sp-5); min-width: 0; }
-.panel h2 { margin: 0; font-size: 16px; letter-spacing: -.01em; }
+.kpi.alert.is-selected { box-shadow: 0 0 0 2px var(--red); }
+
+/* ===== Charts ===== */
+.charts-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sp-4); }
+.panel { background: var(--surface-2); border: 1px solid var(--hairline); border-radius: var(--r-inner); padding: var(--sp-5); min-width: 0; }
+.panel.span-4 { grid-column: span 4; }
+.panel.span-2 { grid-column: span 2; }
+.panel.span-3 { grid-column: span 3; }
+.panel h3 { margin: 0; font-size: 16px; letter-spacing: -.01em; }
 .panel .sub { margin: 2px 0 var(--sp-4); color: var(--muted); font-size: 13px; }
 .chart-empty { color: var(--muted); font-style: italic; padding: var(--sp-5) 0; text-align: center; }
 
@@ -88,8 +123,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .hist .bar-val { fill: var(--ink); font-size: 12px; font-weight: 700; }
 .bar { fill: var(--bar-ok); }
 .bar.late { fill: var(--bar-late); }
-.hit { fill: transparent; cursor: default; }
-.hit:hover, .hit:focus-visible { fill: rgba(15,27,51,.06); }
+.bar.sel { stroke: var(--ink); stroke-width: 2; }
+.hit { fill: transparent; cursor: pointer; }
+.hit:hover, .hit:focus-visible { fill: rgba(15,27,51,.07); }
 .legend-row { display: flex; flex-wrap: wrap; gap: var(--sp-4); margin: 0 0 var(--sp-2); padding: 0; list-style: none; color: var(--ink-2); font-size: 12px; }
 .legend-row li { display: flex; align-items: center; gap: 6px; }
 
@@ -101,13 +137,30 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .swatch.late { background: var(--bar-late); }
 
 .pie-wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--sp-5); }
-.pie { width: 190px; height: 190px; flex: none; }
-.slice { fill: var(--c); stroke: var(--surface); stroke-width: 2; stroke-linejoin: round; }
+.pie { width: 180px; height: 180px; flex: none; }
+.slice { fill: var(--c); stroke: var(--surface-2); stroke-width: 2; stroke-linejoin: round; cursor: pointer; }
 .slice:hover, .slice:focus-visible { opacity: .82; }
-.pie-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); min-width: 190px; flex: 1 1 190px; }
-.pie-legend li { display: grid; grid-template-columns: 10px 1fr auto 40px; gap: var(--sp-2); align-items: center; }
-.pie-legend .lg-n { font-weight: 700; font-variant-numeric: tabular-nums; }
-.pie-legend .lg-pct { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.slice.sel { stroke: var(--ink); stroke-width: 3; }
+.pie-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-1); min-width: 170px; flex: 1 1 170px; }
+.lg-btn { width: 100%; display: grid; grid-template-columns: 10px 1fr auto 40px; gap: var(--sp-2); align-items: center; padding: 5px var(--sp-2); background: transparent; border: 1px solid transparent; border-radius: 6px; cursor: pointer; text-align: left; }
+.lg-btn:hover { background: #fff; border-color: var(--line); }
+.lg-btn.is-selected { background: #fff; border-color: var(--ink); }
+.lg-n { font-weight: 700; font-variant-numeric: tabular-nums; }
+.lg-pct { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Horizontal bar lists (workload, priority) */
+.hbars { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-1); }
+.hbar { width: 100%; display: grid; grid-template-columns: minmax(80px, 120px) 1fr 28px; gap: var(--sp-3); align-items: center; padding: 6px var(--sp-2); background: transparent; border: 1px solid transparent; border-radius: 6px; cursor: pointer; text-align: left; }
+.hbar:hover { background: #fff; border-color: var(--line); }
+.hbar.is-selected { background: #fff; border-color: var(--ink); }
+.hbar-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); }
+.hbar-track { height: 12px; background: var(--hairline); border-radius: 999px; overflow: hidden; }
+.hbar-fill { display: block; height: 100%; min-width: 0; background: var(--bar-ok); border-radius: 999px; transition: width .35s ease; }
+.hbar-fill.p-critical { background: var(--red); }
+.hbar-fill.p-high { background: var(--amber); }
+.hbar-fill.p-medium { background: var(--blue-500); }
+.hbar-fill.p-low { background: var(--grey); }
+.hbar-n { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
 
 .data-table { margin-top: var(--sp-3); font-size: 12px; color: var(--ink-2); }
 .data-table summary { cursor: pointer; width: fit-content; color: var(--blue-700); font-weight: 600; }
@@ -118,12 +171,34 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .tip { position: absolute; z-index: 20; pointer-events: none; background: var(--navy-900); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; line-height: 1.4; white-space: pre-line; max-width: 260px; transform: translate(-50%, calc(-100% - 10px)); box-shadow: 0 4px 14px rgba(10,31,68,.3); }
 .tip[hidden] { display: none; }
 
+/* ===== Details (drill-down) ===== */
+.detail-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.detail-head h3 { margin: 0; font-size: 16px; }
+.detail-head p { margin: 0; color: var(--muted); font-size: 13px; }
+.detail-head .btn { margin-left: auto; }
+.table-scroll { overflow-x: auto; border: 1px solid var(--hairline); border-radius: var(--r-inner); }
+.detail-table { width: 100%; min-width: 680px; border-collapse: collapse; }
+.detail-table th { text-align: left; font-size: 12px; font-weight: 600; color: var(--ink-2); background: var(--surface-2); padding: 8px var(--sp-3); border-bottom: 1px solid var(--line); }
+.detail-table td { padding: 10px var(--sp-3); border-bottom: 1px solid var(--hairline); vertical-align: top; }
+.detail-table tr:last-child td { border-bottom: 0; }
+.detail-table .mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.detail-table .due-late { color: var(--red); font-weight: 600; }
+.detail-empty { color: var(--muted); padding: var(--sp-5) 0; }
+
 /* ===== Board ===== */
-.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--sp-4); align-items: start; }
-.column { background: #e2e9f4; border: 2px solid transparent; border-top: 5px solid var(--c, var(--blue-700)); border-radius: var(--r-panel); padding: var(--sp-3); min-height: 240px; min-width: 0; }
+.board { display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: flex-start; }
+.column { flex: 1 1 240px; min-width: 0; background: #e2e9f4; border: 2px solid transparent; border-top: 5px solid var(--c, var(--blue-700)); border-radius: var(--r-panel); padding: var(--sp-3); min-height: 240px; transition: flex-basis .3s ease; }
+.column.collapsed { flex: 0 0 64px; min-height: 240px; padding: var(--sp-3) var(--sp-2); }
 .column.drop-target { border-color: var(--blue-500); border-top-color: var(--blue-500); background: #d3e4fa; }
-.column-header { display: flex; justify-content: space-between; align-items: center; margin: var(--sp-1) var(--sp-1) var(--sp-3); }
-.column-header h2 { font-size: 15px; margin: 0; color: var(--navy-900); letter-spacing: -.01em; }
+.column-header { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-2); margin: var(--sp-1) var(--sp-1) var(--sp-3); }
+.column-header h2 { font-size: 15px; margin: 0; letter-spacing: -.01em; }
+.col-toggle { display: flex; align-items: center; gap: 6px; background: transparent; border: 0; padding: 2px 4px; border-radius: 6px; cursor: pointer; color: var(--navy-900); font-weight: 700; font-size: 15px; }
+.col-toggle:hover { background: rgba(255,255,255,.6); }
+.col-toggle .chev { width: 16px; height: 16px; }
+.column:not(.collapsed) .col-toggle .chev { transform: rotate(90deg); }
+.column.collapsed .column-header { flex-direction: column; margin: var(--sp-1) 0; gap: var(--sp-3); }
+.column.collapsed .col-toggle { flex-direction: column; padding: var(--sp-2) 2px; }
+.column.collapsed .col-label { writing-mode: vertical-rl; }
 .count { background: var(--navy-900); color: #fff; border-radius: 999px; padding: 0 var(--sp-2); font-size: 12px; font-weight: 600; min-width: 24px; text-align: center; }
 .cards { display: flex; flex-direction: column; gap: var(--sp-3); min-height: 120px; }
 .empty { color: var(--muted); font-style: italic; text-align: center; padding: var(--sp-4); }
@@ -142,7 +217,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .card .meta { color: var(--ink-2); font-size: 12px; margin: 3px 0; overflow-wrap: anywhere; display: flex; align-items: center; gap: 6px; }
 .card .meta .icon { color: var(--muted); }
 .pills { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin: var(--sp-3) 0 var(--sp-2); }
-.pill, .tag, .badge-overdue { font-size: 11px; padding: 1px var(--sp-2); border-radius: 999px; border: 1px solid var(--line); background: #f3f7fd; }
+.pill, .tag, .badge-overdue { font-size: 11px; padding: 1px var(--sp-2); border-radius: 999px; border: 1px solid var(--line); background: #f3f7fd; white-space: nowrap; }
 .pill.critical { background: var(--red-bg); border-color: var(--red); color: var(--red); }
 .pill.high { background: #fff3dc; border-color: var(--amber); color: #8a5300; }
 .pill.medium { background: var(--blue-100); border-color: var(--blue-500); color: var(--blue-700); }
@@ -172,24 +247,62 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
 .error { color: var(--red); font-size: 12px; min-height: 0; }
 .form-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: var(--sp-2); }
 
+/* ===== WhatsApp IT support widget ===== */
+.wa { position: fixed; right: var(--sp-5); bottom: var(--sp-5); z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: var(--sp-3); }
+.wa-fab { width: 58px; height: 58px; border-radius: 50%; border: 0; background: var(--wa); color: #fff; cursor: pointer; display: grid; place-items: center; box-shadow: 0 6px 18px rgba(10,31,68,.35); }
+.wa-fab:hover { background: var(--wa-dark); }
+.wa-fab svg { width: 32px; height: 32px; }
+.wa-panel { width: min(340px, calc(100vw - 32px)); max-height: min(82vh, 680px); display: flex; flex-direction: column; background: var(--surface); border-radius: var(--r-panel); overflow: hidden; box-shadow: 0 10px 40px rgba(10,31,68,.35); animation: wa-in .18s ease-out; }
+.wa-panel[hidden] { display: none; }
+.wa-head { background: var(--wa); color: #fff; padding: var(--sp-3) var(--sp-4); display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.wa-head h2 { margin: 0; font-size: 16px; }
+.wa-head p { margin: 0; font-size: 12px; opacity: .9; }
+.wa-head .icon-btn { color: #fff; }
+.wa-body { padding: var(--sp-4); background: #ece5dd; overflow-y: auto; display: flex; flex-direction: column; gap: var(--sp-3); }
+.wa-bubble { background: #fff; border-radius: 0 var(--r-inner) var(--r-inner) var(--r-inner); padding: var(--sp-3); max-width: 92%; box-shadow: 0 1px 1px rgba(0,0,0,.12); }
+.wa-bubble p { margin: 0; }
+.wa-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); }
+.wa-q { display: block; background: #fff; color: var(--wa-dark); border: 1px solid var(--wa); border-radius: var(--r-inner); padding: 8px var(--sp-3); text-decoration: none; font-weight: 600; font-size: 13px; }
+.wa-q:hover { background: #e7f6f3; }
+.wa-foot { padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--hairline); font-size: 12px; color: var(--muted); }
+.wa-foot a { color: var(--wa-dark); font-weight: 600; }
+@keyframes wa-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ===== Security briefing notice ===== */
+.briefing { width: min(460px, 94vw); }
+.briefing-body { padding: var(--sp-5); }
+.briefing-body p { margin: 0 0 var(--sp-3); }
+.briefing-when { background: var(--blue-100); border-radius: var(--r-inner); padding: var(--sp-3) var(--sp-4); display: grid; gap: 2px; margin-bottom: var(--sp-4); }
+.briefing-when strong { font-size: 16px; }
+.briefing-actions { display: flex; justify-content: flex-end; }
+
 /* ===== Toasts ===== */
-.toast-region { position: fixed; right: var(--sp-4); bottom: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-2); z-index: 50; }
+.toast-region { position: fixed; left: var(--sp-4); bottom: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-2); z-index: 50; }
 .toast { background: var(--green); color: #fff; padding: var(--sp-3) var(--sp-4); border-radius: var(--r-ctl); box-shadow: 0 4px 14px rgba(0,0,0,.3); max-width: 340px; }
 .toast.warn { background: var(--amber); color: #2b1b00; }
 
 /* ===== Responsive ===== */
 @media (max-width: 960px) {
-  .insights { grid-template-columns: minmax(0, 1fr); }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .panel.span-4, .panel.span-2, .panel.span-3 { grid-column: 1 / -1; }
 }
 @media (max-width: 768px) {
   .page { padding: 0 var(--sp-3) var(--sp-5); }
   .app-header-inner { padding-left: var(--sp-3); padding-right: var(--sp-3); }
-  .note { margin-left: 0; max-width: none; }
+  .filters-end { margin-left: 0; justify-content: flex-start; }
+  .acc-toggle { padding: 12px var(--sp-4); flex-wrap: wrap; }
+  .acc-summary { margin-left: 30px; text-align: left; flex-basis: 100%; }
+  .acc-pad { padding: var(--sp-1) var(--sp-3) var(--sp-4); }
   .panel { padding: var(--sp-4); }
+  .wa { right: var(--sp-4); bottom: var(--sp-4); }
   .kpi { padding: var(--sp-3) var(--sp-4); }
   .kpi-value { font-size: 32px; }
+  .meter-track { width: 110px; }
   form { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acc-body, .chev, .meter-fill, .hbar-fill, .column { transition: none; }
+  .wa-panel { animation: none; }
 }
 </style>
 </head>
@@ -198,6 +311,7 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
 <header class="app-header">
   <div class="app-header-inner">
     <h1 class="wordmark">IT PMO <span>Project board</span></h1>
+    <div class="meter" id="meter"></div>
     <button type="button" class="btn" id="openAdd">Add task</button>
   </div>
 </header>
@@ -214,27 +328,92 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
       <select id="fPriority"><option value="">All priorities</option></select>
     </label>
     <button type="button" class="btn secondary" id="clearFilters">Clear filters</button>
-    <p class="note">Demo only: data is held in memory. Refreshing the page resets the board to the seeded tasks.</p>
+    <div class="filters-end">
+      <button type="button" class="btn secondary small" data-toggle-all="open">Expand all</button>
+      <button type="button" class="btn secondary small" data-toggle-all="close">Collapse all</button>
+      <p class="note">Demo only: data is held in memory. Refreshing the page resets the board to the seeded tasks.</p>
+    </div>
   </section>
 
-  <section class="insights" id="insights" aria-label="Portfolio overview">
-    <div class="kpis" id="kpis"></div>
-    <section class="panel hist" aria-labelledby="histTitle">
-      <h2 id="histTitle">When open tasks are due</h2>
-      <p class="sub">Open tasks grouped by days until the due date.</p>
-      <div id="histBody"></div>
-    </section>
-    <section class="panel" aria-labelledby="pieTitle">
-      <h2 id="pieTitle">Tasks by status</h2>
-      <p class="sub">Share of all tasks in each column.</p>
-      <div id="pieBody"></div>
-    </section>
-    <div class="tip" id="tip" role="tooltip" hidden></div>
-  </section>
+  <div class="stack" id="stack">
 
-  <main>
-    <section class="board" id="board" aria-label="Kanban board"></section>
-  </main>
+    <section class="acc open" id="acc-overview">
+      <h2 class="acc-head">
+        <button type="button" class="acc-toggle" aria-expanded="true" aria-controls="accp-overview" data-toggle="overview">
+          <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg>
+          <span class="acc-title">Key figures</span>
+          <span class="acc-summary" id="sum-overview"></span>
+        </button>
+      </h2>
+      <div class="acc-body" id="accp-overview" role="region" aria-label="Key figures">
+        <div class="acc-inner"><div class="acc-pad"><div class="kpis" id="kpis"></div></div></div>
+      </div>
+    </section>
+
+    <section class="acc open" id="acc-charts">
+      <h2 class="acc-head">
+        <button type="button" class="acc-toggle" aria-expanded="true" aria-controls="accp-charts" data-toggle="charts">
+          <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg>
+          <span class="acc-title">Charts</span>
+          <span class="acc-summary" id="sum-charts"></span>
+        </button>
+      </h2>
+      <div class="acc-body" id="accp-charts" role="region" aria-label="Charts">
+        <div class="acc-inner"><div class="acc-pad" id="insights">
+          <div class="charts-grid">
+            <section class="panel hist span-4" aria-labelledby="histTitle">
+              <h3 id="histTitle">When open tasks are due</h3>
+              <p class="sub">Open tasks grouped by days until the due date. Select a bar to list its tasks.</p>
+              <div id="histBody"></div>
+            </section>
+            <section class="panel span-2" aria-labelledby="pieTitle">
+              <h3 id="pieTitle">Tasks by status</h3>
+              <p class="sub">Share of all tasks in each column.</p>
+              <div id="pieBody"></div>
+            </section>
+            <section class="panel span-3" aria-labelledby="asgTitle">
+              <h3 id="asgTitle">Open tasks by assignee</h3>
+              <p class="sub">Who is carrying the work.</p>
+              <div id="asgBody"></div>
+            </section>
+            <section class="panel span-3" aria-labelledby="priTitle">
+              <h3 id="priTitle">Open tasks by priority</h3>
+              <p class="sub">How urgent the open work is.</p>
+              <div id="priBody"></div>
+            </section>
+          </div>
+          <div class="tip" id="tip" role="tooltip" hidden></div>
+        </div></div>
+      </div>
+    </section>
+
+    <section class="acc" id="acc-details">
+      <h2 class="acc-head">
+        <button type="button" class="acc-toggle" aria-expanded="false" aria-controls="accp-details" data-toggle="details">
+          <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg>
+          <span class="acc-title">Details</span>
+          <span class="acc-summary" id="sum-details"></span>
+        </button>
+      </h2>
+      <div class="acc-body" id="accp-details" role="region" aria-label="Details of the selected item" inert>
+        <div class="acc-inner"><div class="acc-pad" id="detailsBody"></div></div>
+      </div>
+    </section>
+
+    <section class="acc open" id="acc-board">
+      <h2 class="acc-head">
+        <button type="button" class="acc-toggle" aria-expanded="true" aria-controls="accp-board" data-toggle="board">
+          <svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg>
+          <span class="acc-title">Board</span>
+          <span class="acc-summary" id="sum-board"></span>
+        </button>
+      </h2>
+      <div class="acc-body" id="accp-board" role="region" aria-label="Kanban board">
+        <div class="acc-inner"><div class="acc-pad"><div class="board" id="board"></div></div></div>
+      </div>
+    </section>
+
+  </div>
 </div>
 
 <dialog id="addDialog" aria-labelledby="addTitle">
@@ -290,6 +469,41 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
   </form>
 </dialog>
 
+<dialog id="briefingDialog" class="briefing" aria-labelledby="briefingTitle" aria-describedby="briefingText">
+  <div class="form-head">
+    <h2 id="briefingTitle">Security briefing</h2>
+    <button type="button" class="icon-btn" id="closeBriefingX" aria-label="Close security briefing notice">×</button>
+  </div>
+  <div class="briefing-body">
+    <p id="briefingText">There is a company security briefing next Monday. Please attend.</p>
+    <div class="briefing-when">
+      <strong id="briefingWhen"></strong>
+      <span id="briefingWhere"></span>
+    </div>
+    <div class="briefing-actions"><button type="button" class="btn" id="closeBriefing">Got it</button></div>
+  </div>
+</dialog>
+
+<div class="wa" id="wa">
+  <section class="wa-panel" id="waPanel" role="dialog" aria-labelledby="waTitle" hidden>
+    <div class="wa-head">
+      <div>
+        <h2 id="waTitle">IT support</h2>
+        <p>Chat with us on WhatsApp</p>
+      </div>
+      <button type="button" class="icon-btn" id="waClose" aria-label="Close IT support chat">×</button>
+    </div>
+    <div class="wa-body">
+      <div class="wa-bubble"><p>Hi, how can IT support help? Pick a topic and WhatsApp opens with your question ready to send.</p></div>
+      <ul class="wa-list" id="waList"></ul>
+    </div>
+    <div class="wa-foot">Not listed? <a id="waOther" target="_blank" rel="noopener noreferrer">Start a chat</a></div>
+  </section>
+  <button type="button" class="wa-fab" id="waFab" aria-expanded="false" aria-controls="waPanel" aria-label="Open IT support chat on WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/><path fill="var(--wa)" d="M16.6 14.2c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8.9-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.4.4 0 0 0 0-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.5 4 5.1 5.1 0 0 0 3.1.7 2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c0-.1-.2-.2-.4-.3z"/></svg>
+  </button>
+</div>
+
 <div class="toast-region" id="toasts" aria-live="polite"></div>
 
 <script>
@@ -300,6 +514,23 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
    confirmation email to the address below. Notifications only deliver after
    the link in that email is clicked. Replace the placeholder with your address. */
 const FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/YOUR_EMAIL@example.com";
+
+/* Security briefing notice: shown once per page load after the visitor has
+   stayed on the page for BRIEFING.delayMs. Nothing is stored. */
+const BRIEFING = { delayMs: 10000, weekday: 1 /* Monday */, time: "10:00 am", place: "Town Hall room" };
+
+/* WhatsApp IT support widget: the number is digits only, with country code. */
+const SUPPORT_WHATSAPP = "6512345678";
+const SUPPORT_QUERIES = [
+  "Reset my password or unlock my account",
+  "I can't connect to the VPN",
+  "Request access to a system or shared folder",
+  "My laptop is slow or won't start",
+  "Report a suspicious email",
+  "Printer or meeting room equipment not working",
+  "Check the status of my IT ticket",
+  "Talk to an IT support agent",
+];
 
 /* ===== Constants ===== */
 const STATUSES = ["Backlog", "In Progress", "Blocked", "Done"];
@@ -323,10 +554,13 @@ const BINS = [
   { label: "28+", sub: "", from: 28, to: Infinity },
 ];
 
+const SECTIONS = ["overview", "charts", "details", "board"];
+
 const ICON = {
   user: '<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="5.5" r="2.6"/><path d="M2.8 13.5c.6-2.4 2.6-3.6 5.2-3.6s4.6 1.2 5.2 3.6"/></svg>',
   calendar: '<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" rx="1.8"/><path d="M2.5 6.8h11M5.5 2v3M10.5 2v3"/></svg>',
   warn: '<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.2 14.2 13H1.8z"/><path d="M8 6.5v3M8 11.3v.1"/></svg>',
+  chev: '<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg>',
 };
 
 /* ===== State (single source of truth, memory only) ===== */
@@ -334,6 +568,10 @@ const state = { tasks: [], filters: { project: "", assignee: "", priority: "" } 
 let idCounter = 0;
 let confirmingId = null; // card currently showing inline "Delete? Yes/No"
 let draggingId = null;
+/* UI-only state that must survive re-renders */
+const openSections = { overview: true, charts: true, details: false, board: true };
+const collapsedCols = new Set(); // board columns shrunk to a slim bar
+let selection = null;            // "kind:value" of the clicked tile, bar, slice or row
 
 /* ===== Helpers ===== */
 function escapeHtml(value) {
@@ -365,6 +603,12 @@ function optionsHtml(list) {
 function plural(n, word) {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
+function selAttr(key) {
+  return `data-select="${escapeHtml(key)}"`;
+}
+function selClass(key) {
+  return selection === key ? " is-selected" : "";
+}
 
 /* ===== Seed data ===== */
 function seedTasks() {
@@ -392,6 +636,21 @@ function applyFilters() {
     (!f.project || t.project === f.project) &&
     (!f.priority || t.priority === f.priority) &&
     (!needle || t.assignee.toLowerCase().includes(needle)));
+}
+
+/* ===== Collapsible sections ===== */
+function setOpen(name, open) {
+  openSections[name] = open;
+  const acc = document.getElementById("acc-" + name);
+  acc.classList.toggle("open", open);
+  acc.querySelector(".acc-toggle").setAttribute("aria-expanded", String(open));
+  document.getElementById("accp-" + name).inert = !open; // collapsed content leaves the tab order
+}
+function toggleSection(name) {
+  setOpen(name, !openSections[name]);
+}
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 /* ===== Rendering: board ===== */
@@ -432,13 +691,14 @@ function renderBoard() {
   const visible = applyFilters();
   document.getElementById("board").innerHTML = STATUSES.map(status => {
     const cards = visible.filter(t => t.status === status);
+    const collapsed = collapsedCols.has(status);
     return `
-      <section class="column" data-slot="${STATUS_SLOT[status]}" data-status="${escapeHtml(status)}" aria-label="${escapeHtml(status)} column">
+      <section class="column${collapsed ? " collapsed" : ""}" data-slot="${STATUS_SLOT[status]}" data-status="${escapeHtml(status)}" aria-label="${escapeHtml(status)} column">
         <div class="column-header">
-          <h2>${escapeHtml(status)}</h2>
+          <h2><button type="button" class="col-toggle" data-action="toggle-col" data-status="${escapeHtml(status)}" aria-expanded="${!collapsed}" aria-label="${collapsed ? "Expand" : "Collapse"} ${escapeHtml(status)} column">${ICON.chev}<span class="col-label">${escapeHtml(status)}</span></button></h2>
           <span class="count" aria-label="${plural(cards.length, "task")}">${cards.length}</span>
         </div>
-        <div class="cards">${cards.length ? cards.map(renderCard).join("") : '<p class="empty">No tasks</p>'}</div>
+        ${collapsed ? "" : `<div class="cards">${cards.length ? cards.map(renderCard).join("") : '<p class="empty">No tasks</p>'}</div>`}
       </section>`;
   }).join("");
   renderInsights(visible);
@@ -448,13 +708,20 @@ function renderBoard() {
 function renderKpis(visible) {
   const count = s => visible.filter(t => t.status === s).length;
   const overdue = visible.filter(isOverdue).length;
-  const tile = (value, label, cls, icon) =>
-    `<div class="kpi ${cls || ""}"><span class="kpi-value">${value}</span><span class="kpi-label">${icon || ""}${label}</span></div>`;
+  const tile = (key, value, label, cls, icon) =>
+    `<button type="button" class="kpi ${cls || ""}${selClass(key)}" ${selAttr(key)} aria-pressed="${selection === key}">
+       <span class="kpi-value">${value}</span><span class="kpi-label">${icon || ""}${label}</span><span class="kpi-hint">View tasks</span>
+     </button>`;
   document.getElementById("kpis").innerHTML =
-    tile(visible.length, "Tasks") +
-    tile(count("In Progress"), "In progress") +
-    tile(count("Blocked"), "Blocked") +
-    tile(overdue, "Overdue", overdue ? "alert" : "", overdue ? ICON.warn : "");
+    tile("kpi:total", visible.length, "Tasks") +
+    tile("kpi:progress", count("In Progress"), "In progress") +
+    tile("kpi:blocked", count("Blocked"), "Blocked") +
+    tile("kpi:overdue", overdue, "Overdue", overdue ? "alert" : "", overdue ? ICON.warn : "");
+
+  const done = count("Done");
+  const pct = visible.length ? Math.round(done / visible.length * 100) : 0;
+  document.getElementById("meter").innerHTML =
+    `<span>Completed <strong>${pct}%</strong></span><span class="meter-track" role="img" aria-label="${done} of ${visible.length} tasks done"><span class="meter-fill" style="width:${pct}%"></span></span>`;
 }
 
 function histogramData(visible) {
@@ -492,6 +759,7 @@ function renderHistogram(visible) {
   }
 
   const marks = data.map((d, i) => {
+    const key = "bin:" + i;
     const n = d.tasks.length;
     const x0 = m.l + i * slotW;
     const cx = x0 + slotW / 2;
@@ -502,7 +770,7 @@ function renderHistogram(visible) {
       const r = Math.min(4, h, bw / 2);
       const bx = x0 + 1;
       const by = y(n);
-      bar = `<path class="bar${d.bin.late ? " late" : ""}" d="M${bx} ${by + h} V${by + r} a${r} ${r} 0 0 1 ${r} ${-r} H${bx + bw - r} a${r} ${r} 0 0 1 ${r} ${r} V${by + h} Z"/>`;
+      bar = `<path class="bar${d.bin.late ? " late" : ""}${selection === key ? " sel" : ""}" d="M${bx} ${by + h} V${by + r} a${r} ${r} 0 0 1 ${r} ${-r} H${bx + bw - r} a${r} ${r} 0 0 1 ${r} ${r} V${by + h} Z"/>`;
       val = `<text class="bar-val" x="${cx}" y="${by - 5}" text-anchor="middle">${n}</text>`;
     }
     const ids = d.tasks.slice(0, 4).map(t => t.id).join(", ") + (n > 4 ? ` and ${n - 4} more` : "");
@@ -510,8 +778,8 @@ function renderHistogram(visible) {
     const sub = d.bin.sub ? `<text class="tick-x" x="${cx}" y="${H - m.b + 32}" text-anchor="middle">${d.bin.sub}</text>` : "";
     return `${bar}${val}
       <text class="tick-x" x="${cx}" y="${H - m.b + 17}" text-anchor="middle">${d.bin.label}</text>${sub}
-      <rect class="hit" x="${x0}" y="${m.t}" width="${slotW}" height="${plotH + 28}" tabindex="0" role="img"
-        data-tip="${escapeHtml(tip)}" aria-label="${escapeHtml(d.name + ": " + plural(n, "task"))}"/>`;
+      <rect class="hit" x="${x0}" y="${m.t}" width="${slotW}" height="${plotH + 28}" tabindex="0" role="button" ${selAttr(key)}
+        data-tip="${escapeHtml(tip)}" aria-pressed="${selection === key}" aria-label="${escapeHtml(d.name + ": " + plural(n, "task") + ". Select to list tasks.")}"/>`;
   }).join("");
 
   const rows = data.map(d => `<tr><td>${escapeHtml(d.name)}</td><td>${d.tasks.length}</td></tr>`).join("");
@@ -546,17 +814,20 @@ function renderPie(visible) {
   const pct = n => Math.round(n / total * 100);
   let angle = -Math.PI / 2;
   const slices = rows.filter(r => r.n).map(r => {
+    const key = "status:" + r.status;
     const sweep = r.n / total * Math.PI * 2;
     const tip = `${r.status}\n${plural(r.n, "task")}, ${pct(r.n)}%`;
-    const attrs = `class="slice" data-slot="${STATUS_SLOT[r.status]}" tabindex="0" role="img" data-tip="${escapeHtml(tip)}" aria-label="${escapeHtml(r.status + ": " + plural(r.n, "task"))}"`;
+    const attrs = `class="slice${selection === key ? " sel" : ""}" data-slot="${STATUS_SLOT[r.status]}" tabindex="0" role="button" ${selAttr(key)} data-tip="${escapeHtml(tip)}" aria-pressed="${selection === key}" aria-label="${escapeHtml(r.status + ": " + plural(r.n, "task") + ". Select to list tasks.")}"`;
     const shape = r.n === total
       ? `<circle ${attrs} cx="100" cy="100" r="94"/>`
       : `<path ${attrs} d="${slicePath(100, 100, 94, angle, angle + sweep)}"/>`;
     angle += sweep;
     return shape;
   }).join("");
-  const legend = rows.map(r =>
-    `<li data-slot="${STATUS_SLOT[r.status]}"><span class="swatch"></span><span>${escapeHtml(r.status)}</span><span class="lg-n">${r.n}</span><span class="lg-pct">${pct(r.n)}%</span></li>`).join("");
+  const legend = rows.map(r => {
+    const key = "status:" + r.status;
+    return `<li><button type="button" class="lg-btn${selClass(key)}" data-slot="${STATUS_SLOT[r.status]}" ${selAttr(key)} aria-pressed="${selection === key}"><span class="swatch"></span><span>${escapeHtml(r.status)}</span><span class="lg-n">${r.n}</span><span class="lg-pct">${pct(r.n)}%</span></button></li>`;
+  }).join("");
   const tableRows = rows.map(r => `<tr><td>${escapeHtml(r.status)}</td><td>${r.n}</td><td>${pct(r.n)}%</td></tr>`).join("");
   host.innerHTML = `
     <div class="pie-wrap">
@@ -568,14 +839,132 @@ function renderPie(visible) {
     </details>`;
 }
 
+function hbarRow(key, name, n, max, fillClass) {
+  const width = max ? Math.round(n / max * 100) : 0;
+  return `<li><button type="button" class="hbar${selClass(key)}" ${selAttr(key)} aria-pressed="${selection === key}" aria-label="${escapeHtml(name + ": " + plural(n, "open task") + ". Select to list tasks.")}">
+    <span class="hbar-name">${escapeHtml(name)}</span>
+    <span class="hbar-track"><span class="hbar-fill ${fillClass || ""}" style="width:${width}%"></span></span>
+    <span class="hbar-n">${n}</span></button></li>`;
+}
+
+function renderAssignees(visible) {
+  const host = document.getElementById("asgBody");
+  const counts = new Map();
+  visible.filter(t => t.status !== "Done").forEach(t => counts.set(t.assignee, (counts.get(t.assignee) || 0) + 1));
+  if (!counts.size) {
+    host.innerHTML = '<p class="chart-empty">No open tasks to chart.</p>';
+    return;
+  }
+  const rows = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const max = rows[0][1];
+  host.innerHTML = `<ul class="hbars">${rows.map(([name, n]) => hbarRow("assignee:" + name, name, n, max)).join("")}</ul>`;
+}
+
+function renderPriorities(visible) {
+  const host = document.getElementById("priBody");
+  const open = visible.filter(t => t.status !== "Done");
+  if (!open.length) {
+    host.innerHTML = '<p class="chart-empty">No open tasks to chart.</p>';
+    return;
+  }
+  const rows = PRIORITIES.map(p => [p, open.filter(t => t.priority === p).length]);
+  const max = Math.max(...rows.map(r => r[1]));
+  host.innerHTML = `<ul class="hbars">${rows.map(([p, n]) => hbarRow("priority:" + p, p, n, max, "p-" + p.toLowerCase())).join("")}</ul>`;
+}
+
+/* ===== Rendering: details (drill-down for the clicked item) ===== */
+function selectionInfo(key, visible) {
+  if (!key) return null;
+  const i = key.indexOf(":");
+  const kind = key.slice(0, i), value = key.slice(i + 1);
+  const open = visible.filter(t => t.status !== "Done");
+  switch (kind) {
+    case "kpi": {
+      const map = {
+        total: ["All tasks", "Every task matching the filters.", visible],
+        progress: ["In progress", "Tasks currently being worked on.", visible.filter(t => t.status === "In Progress")],
+        blocked: ["Blocked", "Tasks waiting on something else.", visible.filter(t => t.status === "Blocked")],
+        overdue: ["Overdue", "Open tasks past their due date.", visible.filter(isOverdue)],
+      };
+      const m = map[value];
+      return m ? { title: m[0], note: m[1], tasks: m[2] } : null;
+    }
+    case "status":
+      return { title: value, note: "Tasks in this column.", tasks: visible.filter(t => t.status === value) };
+    case "bin": {
+      const d = histogramData(visible)[Number(value)];
+      return d ? { title: d.name, note: "Open tasks in this due-date bucket.", tasks: d.tasks } : null;
+    }
+    case "assignee":
+      return { title: value, note: "Open tasks assigned to this person.", tasks: open.filter(t => t.assignee === value) };
+    case "priority":
+      return { title: `${value} priority`, note: "Open tasks with this priority.", tasks: open.filter(t => t.priority === value) };
+    default:
+      return null;
+  }
+}
+
+function renderDetails(visible) {
+  const host = document.getElementById("detailsBody");
+  const info = selectionInfo(selection, visible);
+  if (!info) {
+    host.innerHTML = '<p class="detail-empty">Select a figure, bar, slice or row above to list its tasks here.</p>';
+    return null;
+  }
+  const tasks = info.tasks.slice().sort((a, b) => a.dueDate.localeCompare(b.dueDate) || a.id.localeCompare(b.id));
+  const rows = tasks.map(t => `
+    <tr>
+      <td class="mono">${escapeHtml(t.id)}</td>
+      <td>${escapeHtml(t.title)}</td>
+      <td>${escapeHtml(t.assignee)}</td>
+      <td><span class="pill ${t.priority.toLowerCase()}">${escapeHtml(t.priority)}</span></td>
+      <td class="${isOverdue(t) ? "due-late" : ""}">${isOverdue(t) ? ICON.warn + " " : ""}${escapeHtml(t.dueDate)}</td>
+      <td>${escapeHtml(t.status)}</td>
+    </tr>`).join("");
+  host.innerHTML = `
+    <div class="detail-head">
+      <h3>${escapeHtml(info.title)} (${tasks.length})</h3>
+      <p>${escapeHtml(info.note)}</p>
+      <button type="button" class="btn secondary small" data-select="${escapeHtml(selection)}">Clear selection</button>
+    </div>
+    ${tasks.length ? `<div class="table-scroll"><table class="detail-table">
+      <thead><tr><th scope="col">ID</th><th scope="col">Task</th><th scope="col">Assignee</th><th scope="col">Priority</th><th scope="col">Due</th><th scope="col">Status</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>` : '<p class="detail-empty">No tasks here right now.</p>'}`;
+  return { title: info.title, count: tasks.length };
+}
+
+function renderSummaries(visible, detail) {
+  const overdue = visible.filter(isOverdue).length;
+  document.getElementById("sum-overview").textContent = `${plural(visible.length, "task")}, ${overdue} overdue`;
+  document.getElementById("sum-charts").textContent = "4 charts";
+  document.getElementById("sum-details").textContent = detail ? `${detail.title}: ${plural(detail.count, "task")}` : "Nothing selected";
+  document.getElementById("sum-board").textContent = `${STATUSES.length} columns, ${plural(visible.length, "task")}`;
+}
+
 function renderInsights(visible) {
   renderKpis(visible);
   renderHistogram(visible);
   renderPie(visible);
+  renderAssignees(visible);
+  renderPriorities(visible);
+  const detail = renderDetails(visible);
+  renderSummaries(visible, detail);
   hideTip();
 }
 
-/* ===== Chart tooltip (delegated on #insights, survives re-renders) ===== */
+/* ===== Selection: clicking an item opens Details and lists its tasks ===== */
+function selectItem(key) {
+  selection = selection === key ? null : key; // clicking the same item again clears it
+  renderInsights(applyFilters());
+  setOpen("details", !!selection);
+  if (selection) {
+    document.getElementById("acc-details").scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "nearest" });
+  }
+  const again = [...document.querySelectorAll("#insights [data-select], #kpis [data-select]")].find(el => el.dataset.select === key);
+  if (again) again.focus({ preventScroll: true });
+}
+
+/* ===== Chart tooltip (delegated, survives re-renders) ===== */
 function hideTip() {
   document.getElementById("tip").hidden = true;
 }
@@ -601,6 +990,27 @@ function setupInsightEvents() {
   root.addEventListener("focusin", e => { const t = hit(e); if (t) showTip(t); });
   root.addEventListener("focusout", hideTip);
   window.addEventListener("resize", () => renderHistogram(applyFilters()));
+}
+
+/* ===== Page-level events: section toggles and item selection ===== */
+function setupPageEvents() {
+  const stack = document.getElementById("stack");
+  stack.addEventListener("click", e => {
+    const toggle = e.target.closest("[data-toggle]");
+    if (toggle) { toggleSection(toggle.dataset.toggle); return; }
+    const pick = e.target.closest("[data-select]");
+    if (pick) selectItem(pick.dataset.select);
+  });
+  // SVG hit areas are not native buttons, so they need Enter and Space.
+  stack.addEventListener("keydown", e => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const pick = e.target.closest("[data-select]");
+    if (pick && pick.tagName.toLowerCase() !== "button") { e.preventDefault(); selectItem(pick.dataset.select); }
+  });
+  // The KPI tiles live in the stack too, so one listener covers them.
+  document.querySelectorAll("[data-toggle-all]").forEach(btn => {
+    btn.addEventListener("click", () => SECTIONS.forEach(name => setOpen(name, btn.dataset.toggleAll === "open")));
+  });
 }
 
 /* ===== Actions ===== */
@@ -725,7 +1135,14 @@ function setupBoardEvents() {
     const btn = e.target.closest("[data-action]");
     if (!btn) return;
     const id = btn.dataset.id;
-    if (btn.dataset.action === "delete") { confirmingId = id; renderBoard(); }
+    if (btn.dataset.action === "toggle-col") {
+      const status = btn.dataset.status;
+      if (collapsedCols.has(status)) collapsedCols.delete(status); else collapsedCols.add(status);
+      renderBoard();
+      const again = [...board.querySelectorAll('[data-action="toggle-col"]')].find(b => b.dataset.status === status);
+      if (again) again.focus({ preventScroll: true });
+    }
+    else if (btn.dataset.action === "delete") { confirmingId = id; renderBoard(); }
     else if (btn.dataset.action === "delete-no") { confirmingId = null; renderBoard(); }
     else if (btn.dataset.action === "delete-yes") deleteTask(id);
   });
@@ -797,6 +1214,57 @@ function setupFormEvents() {
   document.getElementById("taskForm").addEventListener("submit", handleSubmit);
 }
 
+/* ===== Security briefing notice ===== */
+function nextWeekday(weekday) {
+  const d = new Date();
+  d.setDate(d.getDate() + ((weekday - d.getDay() + 7) % 7 || 7)); // today never counts
+  return d;
+}
+function showBriefing() {
+  const dialog = document.getElementById("briefingDialog");
+  const add = document.getElementById("addDialog");
+  if (add.open) { add.addEventListener("close", showBriefing, { once: true }); return; } // wait for the form to close
+  if (document.hidden) { document.addEventListener("visibilitychange", showBriefing, { once: true }); return; } // count visible time only
+  if (dialog.open) return;
+  const date = nextWeekday(BRIEFING.weekday).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+  document.getElementById("briefingWhen").textContent = `${date}, ${BRIEFING.time}`;
+  document.getElementById("briefingWhere").textContent = BRIEFING.place;
+  dialog.showModal();
+  document.getElementById("closeBriefing").focus();
+}
+function setupBriefing() {
+  const dialog = document.getElementById("briefingDialog");
+  ["closeBriefing", "closeBriefingX"].forEach(id => document.getElementById(id).addEventListener("click", () => dialog.close()));
+  setTimeout(showBriefing, BRIEFING.delayMs);
+}
+
+/* ===== WhatsApp IT support widget ===== */
+function whatsappLink(message) {
+  return `https://wa.me/${SUPPORT_WHATSAPP}` + (message ? `?text=${encodeURIComponent(message)}` : "");
+}
+function setupWhatsApp() {
+  const root = document.getElementById("wa");
+  const fab = document.getElementById("waFab");
+  const panel = document.getElementById("waPanel");
+  document.getElementById("waList").innerHTML = SUPPORT_QUERIES.map(q =>
+    `<li><a class="wa-q" href="${escapeHtml(whatsappLink("Hi IT support, I need help with this: " + q))}" target="_blank" rel="noopener noreferrer">${escapeHtml(q)}</a></li>`).join("");
+  document.getElementById("waOther").href = whatsappLink("Hi IT support, I need help.");
+
+  const setPanel = open => {
+    panel.hidden = !open;
+    fab.setAttribute("aria-expanded", String(open));
+    fab.setAttribute("aria-label", (open ? "Close" : "Open") + " IT support chat on WhatsApp");
+  };
+  fab.addEventListener("click", () => setPanel(panel.hidden));
+  document.getElementById("waClose").addEventListener("click", () => { setPanel(false); fab.focus(); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && !panel.hidden) { setPanel(false); fab.focus(); }
+  });
+  document.addEventListener("click", e => {
+    if (!panel.hidden && !root.contains(e.target)) setPanel(false);
+  });
+}
+
 /* ===== Init ===== */
 function init() {
   document.getElementById("fProject").insertAdjacentHTML("beforeend", optionsHtml(PROJECTS));
@@ -811,6 +1279,10 @@ function init() {
   setupFilterEvents();
   setupFormEvents();
   setupInsightEvents();
+  setupPageEvents();
+  setupBriefing();
+  setupWhatsApp();
+  SECTIONS.forEach(name => setOpen(name, openSections[name]));
   renderBoard();
 }
 init();

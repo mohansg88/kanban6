@@ -10,13 +10,13 @@ A single-file demo: a Kanban-style IT PMO project board for a fictitious bank, a
 
 - Vanilla HTML/CSS/JS only: no frameworks, bundler, npm, CDN scripts, web fonts, or image files. Use system fonts and inline SVG/Unicode for icons.
 - No persistence of any kind: no localStorage, sessionStorage, IndexedDB, or cookies. A refresh resets the board to seeded data, and the UI says so.
-- The only backend is FormSubmit's AJAX endpoint (`FORMSUBMIT_ENDPOINT`, config constant at the top of the script). The user's email address must go nowhere else.
+- The only backend is FormSubmit's AJAX endpoint (`FORMSUBMIT_ENDPOINT`, config constant at the top of the script). The user's email address must go nowhere else. The one other outbound path is the floating WhatsApp IT support widget: plain `wa.me` links the visitor chooses to open in a new tab (number and queries are `SUPPORT_WHATSAPP` / `SUPPORT_QUERIES` at the top of the script). It makes no background requests.
 - Use a neutral "IT PMO" text wordmark and a blue palette. Don't use real bank logos or trademarks.
 - No `!important`, no native `alert()`/`confirm()`. Validation errors are inline and delete confirmation is an inline "Delete? Yes / No".
 
 ## Architecture
 
-- `state = { tasks: [], filters: {} }` is the single source of truth. Every change mutates `state` and then calls `renderBoard()`, which re-renders all columns, the key-figure tiles, and the two SVG charts (due-date histogram, status pie) via `innerHTML`. Charts and tiles follow the active filters. Chart tooltips use delegation on `#insights`. Do not mutate card DOM directly.
+- `state = { tasks: [], filters: {} }` is the single source of truth. Every change mutates `state` and then calls `renderBoard()`, which re-renders all columns, the key-figure tiles, and the two SVG charts (due-date histogram, status pie) via `innerHTML`. Charts and tiles follow the active filters. Chart tooltips use delegation on `#insights`. The page is four collapsible sections (Key figures, Charts, Details, Board; static shells in the HTML, toggled by `setOpen()`). Clicking a tile, bar, slice or row calls `selectItem()`, which stores `selection` and opens Details with that item's tasks. `openSections`, `collapsedCols` (shrunk board columns) and `selection` are module-level so they survive re-renders. Do not mutate card DOM directly.
 - Every user-supplied string must go through `escapeHtml()` before it is placed in an HTML string.
 - Board events use delegation on `#board` (click, change, and the native drag events), so they survive re-renders. UI-only state that must survive a re-render, such as `confirmingId` (the card showing the delete confirm) and `draggingId`, lives in module-level variables.
 - Add Task flow: `handleSubmit` runs `validate()`, then `addTask()` (optimistic: the card appears at once), then `notifyNewTask()` (FormSubmit) inside try/catch. A failed call only shows a warning toast and must never break the board.
