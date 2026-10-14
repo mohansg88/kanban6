@@ -16,7 +16,7 @@ A single-file demo: a Kanban-style IT PMO project board for a fictitious bank, a
 
 ## Architecture
 
-- `state = { tasks: [], filters: {} }` is the single source of truth. Every change mutates `state` and then calls `renderBoard()`, which re-renders all columns and the header summary via `innerHTML`. Do not mutate card DOM directly.
+- `state = { tasks: [], filters: {} }` is the single source of truth. Every change mutates `state` and then calls `renderBoard()`, which re-renders all columns, the key-figure tiles, and the two SVG charts (due-date histogram, status pie) via `innerHTML`. Charts and tiles follow the active filters. Chart tooltips use delegation on `#insights`. Do not mutate card DOM directly.
 - Every user-supplied string must go through `escapeHtml()` before it is placed in an HTML string.
 - Board events use delegation on `#board` (click, change, and the native drag events), so they survive re-renders. UI-only state that must survive a re-render, such as `confirmingId` (the card showing the delete confirm) and `draggingId`, lives in module-level variables.
 - Add Task flow: `handleSubmit` runs `validate()`, then `addTask()` (optimistic: the card appears at once), then `notifyNewTask()` (FormSubmit) inside try/catch. A failed call only shows a warning toast and must never break the board.

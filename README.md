@@ -2,11 +2,12 @@
 
 A Kanban-style IT PMO project board demo for a fictitious bank, built as a single `index.html` file.
 
-![IT PMO Kanban board](docs/screenshot.png)
+![IT PMO Kanban board](docs/screenshot_v2.jpg)
 
 ## Features
 
-- Four columns: Backlog, In Progress, Blocked, Done, with a summary of counts in the header
+- Four columns: Backlog, In Progress, Blocked, Done, with key-figure tiles (tasks, in progress, blocked, overdue)
+- Histogram of open tasks by days until due (overdue buckets in red) and a pie chart of tasks by status, both with hover tooltips, a "View as table" option, and following the active filters
 - Drag and drop cards between columns, or use the Move dropdown on each card
 - Filters by project, assignee and priority
 - Overdue logic: a task is overdue when its due date is before today and it is not Done
@@ -27,7 +28,7 @@ Open `index.html` in a browser. No build step or server is needed.
 
 ```
 index.html          markup, styles and script
-docs/screenshot.png board screenshot
+docs/screenshot_v2.jpg board screenshot
 CLAUDE.md           guidance for Claude Code
 ```
 

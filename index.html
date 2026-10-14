@@ -7,61 +7,130 @@
 <style>
 /* ===== Design tokens ===== */
 :root {
-  --blue-900: #0b2a5b;
+  /* Surfaces and ink */
+  --navy-900: #0a1f44;
+  --navy-800: #102c5c;
   --blue-700: #1250a8;
   --blue-500: #2f7de1;
   --blue-100: #e3edfb;
-  --blue-50:  #f3f7fd;
-  --ink: #1b2433;
-  --muted: #5b6678;
-  --line: #d5dce8;
-  --white: #ffffff;
+  --paper: #eef2f8;
+  --surface: #ffffff;
+  --ink: #0f1b33;
+  --ink-2: #44506a;
+  --muted: #62708a;
+  --line: #d6deea;
+  --hairline: #e6ebf3;
   --red: #c62828;
   --red-bg: #fdeaea;
   --amber: #e08a00;
   --grey: #8a93a3;
   --green: #1b7f4b;
-  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px;
-  --radius: 6px;
+
+  /* Chart series, fixed order (validated categorical slots 1-4, plus the late bar) */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --bar-ok: #2a78d6;
+  --bar-late: #d03b3b;
+
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px;
+  --r-panel: 14px;
+  --r-card: 8px;
+  --r-ctl: 8px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 * { box-sizing: border-box; }
-body { margin: 0; font-family: var(--font); color: var(--ink); background: var(--blue-50); font-size: 14px; line-height: 1.4; }
+body { margin: 0; font-family: var(--font); color: var(--ink); background: var(--paper); font-size: 14px; line-height: 1.45; }
 button, input, select, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--blue-500); outline-offset: 2px; }
+.page { max-width: 1440px; margin: 0 auto; padding: 0 var(--sp-5) var(--sp-6); }
+.icon { width: 14px; height: 14px; flex: none; vertical-align: -2px; }
 
 /* ===== Header ===== */
-.app-header { background: var(--blue-900); color: var(--white); padding: var(--sp-3) var(--sp-5); display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: center; justify-content: space-between; }
-.wordmark { font-size: 20px; font-weight: 700; letter-spacing: .5px; margin: 0; }
-.wordmark span { font-weight: 400; opacity: .8; font-size: 14px; margin-left: var(--sp-2); }
-.summary { display: flex; flex-wrap: wrap; gap: var(--sp-2); list-style: none; margin: 0; padding: 0; }
-.summary li { background: rgba(255,255,255,.12); padding: var(--sp-1) var(--sp-3); border-radius: 999px; font-size: 13px; }
-.summary li strong { margin-left: var(--sp-1); }
-.summary .overdue-stat { background: var(--red); }
-.btn { border: 1px solid var(--blue-700); background: var(--blue-700); color: var(--white); padding: var(--sp-2) var(--sp-4); border-radius: var(--radius); cursor: pointer; font-weight: 600; }
-.btn:hover { background: var(--blue-500); }
+.app-header { background: var(--navy-900); color: #fff; }
+.app-header-inner { max-width: 1440px; margin: 0 auto; padding: var(--sp-4) var(--sp-5); display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: center; justify-content: space-between; }
+.wordmark { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.03em; line-height: 1; display: flex; align-items: baseline; gap: var(--sp-3); }
+.wordmark span { font-size: 15px; font-weight: 500; letter-spacing: 0; color: #a9bfe6; }
+.btn { border: 1px solid var(--blue-700); background: var(--blue-700); color: #fff; padding: 9px var(--sp-4); border-radius: var(--r-ctl); cursor: pointer; font-weight: 600; }
+.btn:hover { background: var(--blue-500); border-color: var(--blue-500); }
 .btn:disabled { opacity: .6; cursor: not-allowed; }
-.btn.secondary { background: var(--white); color: var(--blue-700); }
-.app-header .btn { background: var(--white); color: var(--blue-900); border-color: var(--white); }
+.btn.secondary { background: var(--surface); color: var(--blue-700); }
+.btn.secondary:hover { background: var(--blue-100); border-color: var(--blue-700); }
+.app-header .btn { background: #fff; color: var(--navy-900); border-color: #fff; }
+.app-header .btn:hover { background: var(--blue-100); border-color: var(--blue-100); }
 
 /* ===== Filters ===== */
-.filters { display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: end; padding: var(--sp-3) var(--sp-5); background: var(--white); border-bottom: 1px solid var(--line); }
-.filters label { display: flex; flex-direction: column; gap: var(--sp-1); font-size: 12px; color: var(--muted); }
-.filters input, .filters select { padding: 6px var(--sp-2); border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); min-width: 170px; }
-.note { margin-left: auto; font-size: 12px; color: var(--muted); }
+.filters { display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: end; padding: var(--sp-4) 0; }
+.filters label { display: flex; flex-direction: column; gap: var(--sp-1); font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.filters input, .filters select { padding: 8px var(--sp-3); border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--surface); min-width: 180px; font-weight: 400; }
+.note { margin: 0 0 0 auto; font-size: 12px; color: var(--muted); max-width: 360px; }
+
+/* ===== Insights: key figures and charts ===== */
+.insights { position: relative; display: grid; gap: var(--sp-4); grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); margin-bottom: var(--sp-5); }
+.kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-4); }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); padding: var(--sp-4) var(--sp-5); display: flex; flex-direction: column; gap: 2px; }
+.kpi-value { font-size: 40px; line-height: 1.05; font-weight: 700; letter-spacing: -.03em; }
+.kpi-label { color: var(--ink-2); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.kpi.alert { border-color: var(--red); background: var(--red-bg); }
+.kpi.alert .kpi-value, .kpi.alert .kpi-label { color: var(--red); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-panel); padding: var(--sp-5); min-width: 0; }
+.panel h2 { margin: 0; font-size: 16px; letter-spacing: -.01em; }
+.panel .sub { margin: 2px 0 var(--sp-4); color: var(--muted); font-size: 13px; }
+.chart-empty { color: var(--muted); font-style: italic; padding: var(--sp-5) 0; text-align: center; }
+
+.hist svg { display: block; width: 100%; height: auto; overflow: visible; }
+.hist .grid { stroke: var(--hairline); stroke-width: 1; }
+.hist .axis { stroke: var(--line); stroke-width: 1; }
+.hist text { fill: var(--muted); font-size: 11px; font-family: var(--font); }
+.hist .tick-x { fill: var(--ink-2); font-size: 12px; }
+.hist .axis-title { fill: var(--muted); font-size: 12px; }
+.hist .bar-val { fill: var(--ink); font-size: 12px; font-weight: 700; }
+.bar { fill: var(--bar-ok); }
+.bar.late { fill: var(--bar-late); }
+.hit { fill: transparent; cursor: default; }
+.hit:hover, .hit:focus-visible { fill: rgba(15,27,51,.06); }
+.legend-row { display: flex; flex-wrap: wrap; gap: var(--sp-4); margin: 0 0 var(--sp-2); padding: 0; list-style: none; color: var(--ink-2); font-size: 12px; }
+.legend-row li { display: flex; align-items: center; gap: 6px; }
+
+[data-slot="1"] { --c: var(--series-1); }
+[data-slot="2"] { --c: var(--series-2); }
+[data-slot="3"] { --c: var(--series-3); }
+[data-slot="4"] { --c: var(--series-4); }
+.swatch { width: 10px; height: 10px; border-radius: 3px; background: var(--c, var(--bar-ok)); flex: none; }
+.swatch.late { background: var(--bar-late); }
+
+.pie-wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--sp-5); }
+.pie { width: 190px; height: 190px; flex: none; }
+.slice { fill: var(--c); stroke: var(--surface); stroke-width: 2; stroke-linejoin: round; }
+.slice:hover, .slice:focus-visible { opacity: .82; }
+.pie-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-2); min-width: 190px; flex: 1 1 190px; }
+.pie-legend li { display: grid; grid-template-columns: 10px 1fr auto 40px; gap: var(--sp-2); align-items: center; }
+.pie-legend .lg-n { font-weight: 700; font-variant-numeric: tabular-nums; }
+.pie-legend .lg-pct { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+.data-table { margin-top: var(--sp-3); font-size: 12px; color: var(--ink-2); }
+.data-table summary { cursor: pointer; width: fit-content; color: var(--blue-700); font-weight: 600; }
+.data-table table { border-collapse: collapse; margin-top: var(--sp-2); width: 100%; }
+.data-table th, .data-table td { text-align: left; padding: 4px var(--sp-2); border-bottom: 1px solid var(--hairline); font-weight: 400; }
+.data-table thead th { font-weight: 600; color: var(--ink); }
+
+.tip { position: absolute; z-index: 20; pointer-events: none; background: var(--navy-900); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; line-height: 1.4; white-space: pre-line; max-width: 260px; transform: translate(-50%, calc(-100% - 10px)); box-shadow: 0 4px 14px rgba(10,31,68,.3); }
+.tip[hidden] { display: none; }
 
 /* ===== Board ===== */
-.board { display: flex; gap: var(--sp-4); padding: var(--sp-4) var(--sp-5); align-items: flex-start; }
-.column { flex: 1 1 0; min-width: 0; background: var(--blue-100); border: 2px solid transparent; border-radius: var(--radius); padding: var(--sp-3); min-height: 240px; }
-.column.drop-target { border-color: var(--blue-500); background: #d3e4fa; }
-.column-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-3); }
-.column-header h2 { font-size: 15px; margin: 0; color: var(--blue-900); }
-.count { background: var(--blue-700); color: var(--white); border-radius: 999px; padding: 0 var(--sp-2); font-size: 12px; min-width: 24px; text-align: center; }
+.board { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--sp-4); align-items: start; }
+.column { background: #e2e9f4; border: 2px solid transparent; border-top: 5px solid var(--c, var(--blue-700)); border-radius: var(--r-panel); padding: var(--sp-3); min-height: 240px; min-width: 0; }
+.column.drop-target { border-color: var(--blue-500); border-top-color: var(--blue-500); background: #d3e4fa; }
+.column-header { display: flex; justify-content: space-between; align-items: center; margin: var(--sp-1) var(--sp-1) var(--sp-3); }
+.column-header h2 { font-size: 15px; margin: 0; color: var(--navy-900); letter-spacing: -.01em; }
+.count { background: var(--navy-900); color: #fff; border-radius: 999px; padding: 0 var(--sp-2); font-size: 12px; font-weight: 600; min-width: 24px; text-align: center; }
 .cards { display: flex; flex-direction: column; gap: var(--sp-3); min-height: 120px; }
 .empty { color: var(--muted); font-style: italic; text-align: center; padding: var(--sp-4); }
 
 /* ===== Cards ===== */
-.card { background: var(--white); border: 1px solid var(--line); border-left: 6px solid var(--grey); border-radius: var(--radius); padding: var(--sp-3); cursor: grab; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.card { background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--grey); border-radius: var(--r-card); padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4); cursor: grab; }
+.card:hover { border-color: #b7c4da; }
 .card.dragging { opacity: .45; }
 .card.p-critical { border-left-color: var(--red); }
 .card.p-high { border-left-color: var(--amber); }
@@ -69,34 +138,35 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .card.p-low { border-left-color: var(--grey); }
 .card-top { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-2); }
 .card-id { font-size: 11px; color: var(--muted); font-family: ui-monospace, Consolas, monospace; }
-.card h3 { font-size: 14px; margin: var(--sp-1) 0; overflow-wrap: anywhere; }
-.card .meta { color: var(--muted); font-size: 12px; margin: 2px 0; overflow-wrap: anywhere; }
-.pills { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin: var(--sp-2) 0; }
-.pill, .tag, .badge-overdue { font-size: 11px; padding: 1px var(--sp-2); border-radius: 999px; border: 1px solid var(--line); background: var(--blue-50); }
+.card h3 { font-size: 14px; line-height: 1.3; margin: var(--sp-1) 0 var(--sp-2); overflow-wrap: anywhere; }
+.card .meta { color: var(--ink-2); font-size: 12px; margin: 3px 0; overflow-wrap: anywhere; display: flex; align-items: center; gap: 6px; }
+.card .meta .icon { color: var(--muted); }
+.pills { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin: var(--sp-3) 0 var(--sp-2); }
+.pill, .tag, .badge-overdue { font-size: 11px; padding: 1px var(--sp-2); border-radius: 999px; border: 1px solid var(--line); background: #f3f7fd; }
 .pill.critical { background: var(--red-bg); border-color: var(--red); color: var(--red); }
 .pill.high { background: #fff3dc; border-color: var(--amber); color: #8a5300; }
 .pill.medium { background: var(--blue-100); border-color: var(--blue-500); color: var(--blue-700); }
 .pill.low { background: #eef0f3; border-color: var(--grey); color: #4b5565; }
-.badge-overdue { background: var(--red-bg); border-color: var(--red); color: var(--red); font-weight: 600; }
+.badge-overdue { background: var(--red-bg); border-color: var(--red); color: var(--red); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
 .card-actions { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-2); margin-top: var(--sp-2); }
-.card-actions select { padding: 2px var(--sp-1); border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); font-size: 12px; }
-.icon-btn { border: 1px solid transparent; background: transparent; cursor: pointer; font-size: 18px; line-height: 1; padding: 2px 8px; border-radius: var(--radius); color: var(--muted); }
+.card-actions select { padding: 3px var(--sp-2); border: 1px solid var(--line); border-radius: 6px; background: var(--surface); font-size: 12px; }
+.icon-btn { border: 1px solid transparent; background: transparent; cursor: pointer; font-size: 18px; line-height: 1; padding: 4px 10px; border-radius: var(--r-ctl); color: var(--muted); }
 .icon-btn:hover { color: var(--red); border-color: var(--red); }
 .confirm { display: flex; align-items: center; gap: var(--sp-2); font-size: 12px; }
-.confirm button { padding: 2px var(--sp-2); border-radius: var(--radius); border: 1px solid var(--line); background: var(--white); cursor: pointer; }
-.confirm .yes { background: var(--red); border-color: var(--red); color: var(--white); }
+.confirm button { padding: 3px var(--sp-2); border-radius: 6px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
+.confirm .yes { background: var(--red); border-color: var(--red); color: #fff; }
 
 /* ===== Modal form ===== */
-dialog { border: none; border-radius: var(--radius); padding: 0; width: min(560px, 94vw); box-shadow: 0 10px 40px rgba(0,0,0,.35); }
-dialog::backdrop { background: rgba(11,42,91,.5); }
-.form-head { background: var(--blue-900); color: var(--white); padding: var(--sp-3) var(--sp-4); display: flex; justify-content: space-between; align-items: center; }
+dialog { border: none; border-radius: var(--r-panel); padding: 0; width: min(560px, 94vw); box-shadow: 0 10px 40px rgba(0,0,0,.35); overflow: hidden; }
+dialog::backdrop { background: rgba(10,31,68,.55); }
+.form-head { background: var(--navy-900); color: #fff; padding: var(--sp-3) var(--sp-4); display: flex; justify-content: space-between; align-items: center; }
 .form-head h2 { margin: 0; font-size: 16px; }
-.form-head .icon-btn { color: var(--white); }
+.form-head .icon-btn { color: #fff; }
 form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); max-height: 80vh; overflow: auto; }
 .field { display: flex; flex-direction: column; gap: var(--sp-1); }
 .field.full { grid-column: 1 / -1; }
 .field label { font-weight: 600; font-size: 12px; }
-.field input, .field select, .field textarea { padding: 7px var(--sp-2); border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
+.field input, .field select, .field textarea { padding: 8px var(--sp-3); border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--surface); }
 .field textarea { min-height: 80px; resize: vertical; }
 .field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--red); }
 .error { color: var(--red); font-size: 12px; min-height: 0; }
@@ -104,15 +174,21 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
 
 /* ===== Toasts ===== */
 .toast-region { position: fixed; right: var(--sp-4); bottom: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-2); z-index: 50; }
-.toast { background: var(--green); color: var(--white); padding: var(--sp-3) var(--sp-4); border-radius: var(--radius); box-shadow: 0 4px 14px rgba(0,0,0,.3); max-width: 340px; }
+.toast { background: var(--green); color: #fff; padding: var(--sp-3) var(--sp-4); border-radius: var(--r-ctl); box-shadow: 0 4px 14px rgba(0,0,0,.3); max-width: 340px; }
 .toast.warn { background: var(--amber); color: #2b1b00; }
 
 /* ===== Responsive ===== */
+@media (max-width: 960px) {
+  .insights { grid-template-columns: minmax(0, 1fr); }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 768px) {
-  .board { flex-direction: column; padding: var(--sp-3); }
-  .column { width: 100%; flex: none; }
-  .filters, .app-header { padding-left: var(--sp-3); padding-right: var(--sp-3); }
-  .note { margin-left: 0; }
+  .page { padding: 0 var(--sp-3) var(--sp-5); }
+  .app-header-inner { padding-left: var(--sp-3); padding-right: var(--sp-3); }
+  .note { margin-left: 0; max-width: none; }
+  .panel { padding: var(--sp-4); }
+  .kpi { padding: var(--sp-3) var(--sp-4); }
+  .kpi-value { font-size: 32px; }
   form { grid-template-columns: 1fr; }
 }
 </style>
@@ -120,37 +196,55 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
 <body>
 
 <header class="app-header">
-  <h1 class="wordmark">IT PMO <span>Project Board · Demo</span></h1>
-  <ul class="summary" id="summary" aria-label="Board summary"></ul>
-  <button type="button" class="btn" id="openAdd">+ Add Task</button>
+  <div class="app-header-inner">
+    <h1 class="wordmark">IT PMO <span>Project board</span></h1>
+    <button type="button" class="btn" id="openAdd">Add task</button>
+  </div>
 </header>
 
-<section class="filters" aria-label="Filters">
-  <label for="fProject">Project
-    <select id="fProject"><option value="">All projects</option></select>
-  </label>
-  <label for="fAssignee">Assignee contains
-    <input type="text" id="fAssignee" placeholder="e.g. Tan">
-  </label>
-  <label for="fPriority">Priority
-    <select id="fPriority"><option value="">All priorities</option></select>
-  </label>
-  <button type="button" class="btn secondary" id="clearFilters">Clear</button>
-  <p class="note">Demo only: data is held in memory. Refreshing the page resets the board to the seeded tasks.</p>
-</section>
+<div class="page">
+  <section class="filters" aria-label="Filters">
+    <label for="fProject">Project
+      <select id="fProject"><option value="">All projects</option></select>
+    </label>
+    <label for="fAssignee">Assignee contains
+      <input type="text" id="fAssignee" placeholder="e.g. Tan">
+    </label>
+    <label for="fPriority">Priority
+      <select id="fPriority"><option value="">All priorities</option></select>
+    </label>
+    <button type="button" class="btn secondary" id="clearFilters">Clear filters</button>
+    <p class="note">Demo only: data is held in memory. Refreshing the page resets the board to the seeded tasks.</p>
+  </section>
 
-<main>
-  <section class="board" id="board" aria-label="Kanban board"></section>
-</main>
+  <section class="insights" id="insights" aria-label="Portfolio overview">
+    <div class="kpis" id="kpis"></div>
+    <section class="panel hist" aria-labelledby="histTitle">
+      <h2 id="histTitle">When open tasks are due</h2>
+      <p class="sub">Open tasks grouped by days until the due date.</p>
+      <div id="histBody"></div>
+    </section>
+    <section class="panel" aria-labelledby="pieTitle">
+      <h2 id="pieTitle">Tasks by status</h2>
+      <p class="sub">Share of all tasks in each column.</p>
+      <div id="pieBody"></div>
+    </section>
+    <div class="tip" id="tip" role="tooltip" hidden></div>
+  </section>
+
+  <main>
+    <section class="board" id="board" aria-label="Kanban board"></section>
+  </main>
+</div>
 
 <dialog id="addDialog" aria-labelledby="addTitle">
   <div class="form-head">
-    <h2 id="addTitle">Add Task</h2>
+    <h2 id="addTitle">Add task</h2>
     <button type="button" class="icon-btn" id="closeAdd" aria-label="Close add task form">×</button>
   </div>
   <form id="taskForm" novalidate>
     <div class="field full">
-      <label for="title">Task Title *</label>
+      <label for="title">Task title *</label>
       <input type="text" id="title" name="title" maxlength="80">
       <span class="error" id="err-title" role="alert"></span>
     </div>
@@ -160,7 +254,7 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
       <span class="error" id="err-description" role="alert"></span>
     </div>
     <div class="field">
-      <label for="project">Project / Workstream *</label>
+      <label for="project">Project / workstream *</label>
       <select id="project" name="project"></select>
       <span class="error" id="err-project" role="alert"></span>
     </div>
@@ -180,7 +274,7 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
       <span class="error" id="err-priority" role="alert"></span>
     </div>
     <div class="field">
-      <label for="dueDate">Due Date *</label>
+      <label for="dueDate">Due date *</label>
       <input type="date" id="dueDate" name="dueDate">
       <span class="error" id="err-dueDate" role="alert"></span>
     </div>
@@ -191,7 +285,7 @@ form { padding: var(--sp-4); display: grid; grid-template-columns: 1fr 1fr; gap:
     </div>
     <div class="form-actions">
       <button type="button" class="btn secondary" id="cancelAdd">Cancel</button>
-      <button type="submit" class="btn" id="submitBtn">Add Task</button>
+      <button type="submit" class="btn" id="submitBtn">Add task</button>
     </div>
   </form>
 </dialog>
@@ -212,6 +306,28 @@ const STATUSES = ["Backlog", "In Progress", "Blocked", "Done"];
 const PRIORITIES = ["Critical", "High", "Medium", "Low"];
 const PROJECTS = ["Core Banking Upgrade", "Digital Channels", "Cybersecurity Uplift", "Data & Analytics", "Infrastructure & Cloud", "Vendor Management"];
 const CATEGORIES = ["Application Development", "Infrastructure", "Cybersecurity", "Data", "Compliance", "Vendor"];
+
+/* Chart colour slots, fixed per status so a filter never repaints the survivors.
+   Pie slices run in slot order so neighbouring slices stay colour-blind safe. */
+const STATUS_SLOT = { "In Progress": 1, "Blocked": 2, "Done": 3, "Backlog": 4 };
+const PIE_ORDER = ["In Progress", "Blocked", "Done", "Backlog"];
+
+/* Histogram buckets over "days until due" (negative = late). */
+const BINS = [
+  { label: "8+", sub: "late", from: -Infinity, to: -8, late: true },
+  { label: "1–7", sub: "late", from: -7, to: -1, late: true },
+  { label: "0–6", sub: "", from: 0, to: 6 },
+  { label: "7–13", sub: "", from: 7, to: 13 },
+  { label: "14–20", sub: "", from: 14, to: 20 },
+  { label: "21–27", sub: "", from: 21, to: 27 },
+  { label: "28+", sub: "", from: 28, to: Infinity },
+];
+
+const ICON = {
+  user: '<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="5.5" r="2.6"/><path d="M2.8 13.5c.6-2.4 2.6-3.6 5.2-3.6s4.6 1.2 5.2 3.6"/></svg>',
+  calendar: '<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" rx="1.8"/><path d="M2.5 6.8h11M5.5 2v3M10.5 2v3"/></svg>',
+  warn: '<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.2 14.2 13H1.8z"/><path d="M8 6.5v3M8 11.3v.1"/></svg>',
+};
 
 /* ===== State (single source of truth, memory only) ===== */
 const state = { tasks: [], filters: { project: "", assignee: "", priority: "" } };
@@ -235,12 +351,19 @@ function offsetDate(days) {
 function isOverdue(task) {
   return task.status !== "Done" && task.dueDate < todayStr();
 }
+function daysUntil(dateStr) {
+  const toUtc = s => { const p = s.split("-").map(Number); return Date.UTC(p[0], p[1] - 1, p[2]); };
+  return Math.round((toUtc(dateStr) - toUtc(todayStr())) / 86400000);
+}
 function nextId() {
   idCounter += 1;
   return "UOB-ITPM-" + String(idCounter).padStart(4, "0");
 }
 function optionsHtml(list) {
   return list.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
+}
+function plural(n, word) {
+  return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
 
 /* ===== Seed data ===== */
@@ -271,7 +394,7 @@ function applyFilters() {
     (!needle || t.assignee.toLowerCase().includes(needle)));
 }
 
-/* ===== Rendering ===== */
+/* ===== Rendering: board ===== */
 function renderCard(task) {
   const overdue = isOverdue(task);
   const moveOpts = STATUSES.filter(s => s !== task.status)
@@ -286,30 +409,23 @@ function renderCard(task) {
     <article class="card p-${task.priority.toLowerCase()}" draggable="true" data-id="${escapeHtml(task.id)}">
       <div class="card-top">
         <span class="card-id">${escapeHtml(task.id)}</span>
-        ${overdue ? '<span class="badge-overdue">Overdue</span>' : ""}
+        ${overdue ? `<span class="badge-overdue">${ICON.warn}Overdue</span>` : ""}
       </div>
       <h3>${escapeHtml(task.title)}</h3>
       <p class="meta">${escapeHtml(task.project)}</p>
-      <p class="meta">👤 ${escapeHtml(task.assignee)} · 📅 ${escapeHtml(task.dueDate)}</p>
+      <p class="meta">${ICON.user}${escapeHtml(task.assignee)}</p>
+      <p class="meta">${ICON.calendar}Due ${escapeHtml(task.dueDate)}</p>
       <div class="pills">
         <span class="pill ${task.priority.toLowerCase()}">${escapeHtml(task.priority)}</span>
         <span class="tag">${escapeHtml(task.category)}</span>
       </div>
       <div class="card-actions">
         <select data-action="move" data-id="${escapeHtml(task.id)}" aria-label="Move ${escapeHtml(task.id)} to another column">
-          <option value="">Move ▸</option>${moveOpts}
+          <option value="">Move to…</option>${moveOpts}
         </select>
         ${actions}
       </div>
     </article>`;
-}
-
-function renderSummary() {
-  const total = state.tasks.length;
-  const overdue = state.tasks.filter(isOverdue).length;
-  const perStatus = STATUSES.map(s => `<li>${escapeHtml(s)}<strong>${state.tasks.filter(t => t.status === s).length}</strong></li>`).join("");
-  document.getElementById("summary").innerHTML =
-    `<li>Total<strong>${total}</strong></li>${perStatus}<li class="overdue-stat">Overdue<strong>${overdue}</strong></li>`;
 }
 
 function renderBoard() {
@@ -317,15 +433,174 @@ function renderBoard() {
   document.getElementById("board").innerHTML = STATUSES.map(status => {
     const cards = visible.filter(t => t.status === status);
     return `
-      <section class="column" data-status="${escapeHtml(status)}" aria-label="${escapeHtml(status)} column">
+      <section class="column" data-slot="${STATUS_SLOT[status]}" data-status="${escapeHtml(status)}" aria-label="${escapeHtml(status)} column">
         <div class="column-header">
           <h2>${escapeHtml(status)}</h2>
-          <span class="count" aria-label="${cards.length} tasks">${cards.length}</span>
+          <span class="count" aria-label="${plural(cards.length, "task")}">${cards.length}</span>
         </div>
         <div class="cards">${cards.length ? cards.map(renderCard).join("") : '<p class="empty">No tasks</p>'}</div>
       </section>`;
   }).join("");
-  renderSummary();
+  renderInsights(visible);
+}
+
+/* ===== Rendering: key figures and charts (follow the active filters) ===== */
+function renderKpis(visible) {
+  const count = s => visible.filter(t => t.status === s).length;
+  const overdue = visible.filter(isOverdue).length;
+  const tile = (value, label, cls, icon) =>
+    `<div class="kpi ${cls || ""}"><span class="kpi-value">${value}</span><span class="kpi-label">${icon || ""}${label}</span></div>`;
+  document.getElementById("kpis").innerHTML =
+    tile(visible.length, "Tasks") +
+    tile(count("In Progress"), "In progress") +
+    tile(count("Blocked"), "Blocked") +
+    tile(overdue, "Overdue", overdue ? "alert" : "", overdue ? ICON.warn : "");
+}
+
+function histogramData(visible) {
+  const open = visible.filter(t => t.status !== "Done");
+  return BINS.map(bin => {
+    const tasks = open.filter(t => { const d = daysUntil(t.dueDate); return d >= bin.from && d <= bin.to; });
+    const name = bin.late ? `${bin.label} days late` : `Due in ${bin.label} days`;
+    return { bin, tasks, name };
+  });
+}
+
+function renderHistogram(visible) {
+  const host = document.getElementById("histBody");
+  const data = histogramData(visible);
+  const total = data.reduce((n, d) => n + d.tasks.length, 0);
+  if (!total) {
+    host.innerHTML = '<p class="chart-empty">No open tasks to chart.</p>';
+    return;
+  }
+  const W = Math.max(280, Math.floor(host.clientWidth || 560));
+  const H = 250;
+  const m = { l: 28, r: 4, t: 20, b: 56 };
+  const plotW = W - m.l - m.r;
+  const plotH = H - m.t - m.b;
+  const max = Math.max(1, ...data.map(d => d.tasks.length));
+  const step = max <= 4 ? 1 : Math.ceil(max / 4);
+  const top = step * Math.ceil(max / step);
+  const y = v => m.t + plotH - (v / top) * plotH;
+  const slotW = plotW / data.length;
+
+  let grid = "";
+  for (let v = 0; v <= top; v += step) {
+    grid += `<line class="${v === 0 ? "axis" : "grid"}" x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}"/>` +
+            `<text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+
+  const marks = data.map((d, i) => {
+    const n = d.tasks.length;
+    const x0 = m.l + i * slotW;
+    const cx = x0 + slotW / 2;
+    const bw = slotW - 2; // 2px surface gap between neighbouring bars
+    let bar = "", val = "";
+    if (n) {
+      const h = plotH * n / top;
+      const r = Math.min(4, h, bw / 2);
+      const bx = x0 + 1;
+      const by = y(n);
+      bar = `<path class="bar${d.bin.late ? " late" : ""}" d="M${bx} ${by + h} V${by + r} a${r} ${r} 0 0 1 ${r} ${-r} H${bx + bw - r} a${r} ${r} 0 0 1 ${r} ${r} V${by + h} Z"/>`;
+      val = `<text class="bar-val" x="${cx}" y="${by - 5}" text-anchor="middle">${n}</text>`;
+    }
+    const ids = d.tasks.slice(0, 4).map(t => t.id).join(", ") + (n > 4 ? ` and ${n - 4} more` : "");
+    const tip = `${d.name}\n${plural(n, "task")}${n ? "\n" + ids : ""}`;
+    const sub = d.bin.sub ? `<text class="tick-x" x="${cx}" y="${H - m.b + 32}" text-anchor="middle">${d.bin.sub}</text>` : "";
+    return `${bar}${val}
+      <text class="tick-x" x="${cx}" y="${H - m.b + 17}" text-anchor="middle">${d.bin.label}</text>${sub}
+      <rect class="hit" x="${x0}" y="${m.t}" width="${slotW}" height="${plotH + 28}" tabindex="0" role="img"
+        data-tip="${escapeHtml(tip)}" aria-label="${escapeHtml(d.name + ": " + plural(n, "task"))}"/>`;
+  }).join("");
+
+  const rows = data.map(d => `<tr><td>${escapeHtml(d.name)}</td><td>${d.tasks.length}</td></tr>`).join("");
+  host.innerHTML = `
+    <ul class="legend-row">
+      <li><span class="swatch late"></span>Overdue</li>
+      <li><span class="swatch"></span>Due today or later</li>
+    </ul>
+    <svg viewBox="0 0 ${W} ${H}" role="group" aria-label="Histogram of open tasks by days until due">
+      ${grid}${marks}
+      <text class="axis-title" x="${m.l + plotW / 2}" y="${H - 4}" text-anchor="middle">Days until due</text>
+    </svg>
+    <details class="data-table"><summary>View as table</summary>
+      <table><thead><tr><th scope="col">Days until due</th><th scope="col">Open tasks</th></tr></thead><tbody>${rows}</tbody></table>
+    </details>`;
+}
+
+function slicePath(cx, cy, r, a0, a1) {
+  const p = a => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1);
+  return `M${cx} ${cy} L${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z`;
+}
+
+function renderPie(visible) {
+  const host = document.getElementById("pieBody");
+  const total = visible.length;
+  if (!total) {
+    host.innerHTML = '<p class="chart-empty">No tasks match these filters.</p>';
+    return;
+  }
+  const rows = PIE_ORDER.map(status => ({ status, n: visible.filter(t => t.status === status).length }));
+  const pct = n => Math.round(n / total * 100);
+  let angle = -Math.PI / 2;
+  const slices = rows.filter(r => r.n).map(r => {
+    const sweep = r.n / total * Math.PI * 2;
+    const tip = `${r.status}\n${plural(r.n, "task")}, ${pct(r.n)}%`;
+    const attrs = `class="slice" data-slot="${STATUS_SLOT[r.status]}" tabindex="0" role="img" data-tip="${escapeHtml(tip)}" aria-label="${escapeHtml(r.status + ": " + plural(r.n, "task"))}"`;
+    const shape = r.n === total
+      ? `<circle ${attrs} cx="100" cy="100" r="94"/>`
+      : `<path ${attrs} d="${slicePath(100, 100, 94, angle, angle + sweep)}"/>`;
+    angle += sweep;
+    return shape;
+  }).join("");
+  const legend = rows.map(r =>
+    `<li data-slot="${STATUS_SLOT[r.status]}"><span class="swatch"></span><span>${escapeHtml(r.status)}</span><span class="lg-n">${r.n}</span><span class="lg-pct">${pct(r.n)}%</span></li>`).join("");
+  const tableRows = rows.map(r => `<tr><td>${escapeHtml(r.status)}</td><td>${r.n}</td><td>${pct(r.n)}%</td></tr>`).join("");
+  host.innerHTML = `
+    <div class="pie-wrap">
+      <svg class="pie" viewBox="0 0 200 200" role="group" aria-label="Pie chart of tasks by status">${slices}</svg>
+      <ul class="pie-legend">${legend}</ul>
+    </div>
+    <details class="data-table"><summary>View as table</summary>
+      <table><thead><tr><th scope="col">Status</th><th scope="col">Tasks</th><th scope="col">Share</th></tr></thead><tbody>${tableRows}</tbody></table>
+    </details>`;
+}
+
+function renderInsights(visible) {
+  renderKpis(visible);
+  renderHistogram(visible);
+  renderPie(visible);
+  hideTip();
+}
+
+/* ===== Chart tooltip (delegated on #insights, survives re-renders) ===== */
+function hideTip() {
+  document.getElementById("tip").hidden = true;
+}
+function showTip(target, clientX, clientY) {
+  const tip = document.getElementById("tip");
+  const root = document.getElementById("insights").getBoundingClientRect();
+  tip.textContent = target.dataset.tip;
+  tip.hidden = false;
+  let x = clientX, yy = clientY;
+  if (x === undefined) {
+    const r = target.getBoundingClientRect();
+    x = r.left + r.width / 2;
+    yy = r.top + Math.min(r.height / 2, 40);
+  }
+  tip.style.left = Math.min(Math.max(x - root.left, 90), root.width - 90) + "px";
+  tip.style.top = (yy - root.top) + "px";
+}
+function setupInsightEvents() {
+  const root = document.getElementById("insights");
+  const hit = e => e.target.closest("[data-tip]");
+  root.addEventListener("mousemove", e => { const t = hit(e); if (t) showTip(t, e.clientX, e.clientY); else hideTip(); });
+  root.addEventListener("mouseleave", hideTip);
+  root.addEventListener("focusin", e => { const t = hit(e); if (t) showTip(t); });
+  root.addEventListener("focusout", hideTip);
+  window.addEventListener("resize", () => renderHistogram(applyFilters()));
 }
 
 /* ===== Actions ===== */
@@ -419,7 +694,7 @@ async function handleSubmit(event) {
 
   const btn = document.getElementById("submitBtn");
   btn.disabled = true;
-  btn.textContent = "Sending…";
+  btn.textContent = "Adding…";
 
   const task = addTask(data); // optimistic: card appears immediately
   resetForm();
@@ -429,10 +704,10 @@ async function handleSubmit(event) {
   try {
     await notifyNewTask(task);
   } catch (err) {
-    showToast("Card added locally — email notification failed", "warn");
+    showToast("Task added to the board, but the email notification failed.", "warn");
   } finally {
     btn.disabled = false;
-    btn.textContent = "Add Task";
+    btn.textContent = "Add task";
   }
 }
 function resetForm() {
@@ -535,6 +810,7 @@ function init() {
   setupBoardEvents();
   setupFilterEvents();
   setupFormEvents();
+  setupInsightEvents();
   renderBoard();
 }
 init();
